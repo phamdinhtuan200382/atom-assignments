@@ -2,6 +2,10 @@
 *.json
 =======
 env_variable.json
+<<<<<<< HEAD
 data/datacracy_slack
 .vscode
 >>>>>>> upstream/main
+=======
+*.csv
+>>>>>>> parent of 493b249 (Update data)
