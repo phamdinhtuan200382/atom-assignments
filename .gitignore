@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 *.json
+=======
+env_variable.json
+data/datacracy_slack
+.vscode
+>>>>>>> upstream/main
