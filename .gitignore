@@ -1,16 +1,2 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 *.json
-=======
-env_variable.json
-<<<<<<< HEAD
-data/datacracy_slack
-.vscode
->>>>>>> upstream/main
-=======
-*.csv
->>>>>>> parent of 493b249 (Update data)
-=======
-env_variable.json
-assignment_3/datacracy-c8fbe6100f5e.json
->>>>>>> parent of 7469023 (Update .gitignore)
