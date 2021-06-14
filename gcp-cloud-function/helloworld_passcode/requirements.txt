@@ -1,4 +1,2 @@
 # Function dependencies, for example:
 # package>=version
-pip install matplotlib
-pip install seaborn
