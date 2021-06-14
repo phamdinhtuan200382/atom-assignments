@@ -6,6 +6,10 @@ import os
 import pandas as pd
 import numpy as np
 import re   
+from statistics import median
+from matplotlib import pyplot as plt
+import seaborn as sns
+pd.plotting.register_matplotlib_converters()
 from datetime import datetime as dt
 
 st.set_page_config(layout="wide")
@@ -40,6 +44,7 @@ def load_users_df():
     # Read dtc_group hosted in github
     dtc_groups = pd.read_csv(DTC_GROUPS_URL)
     user_df = user_df.merge(dtc_groups, how='left', on='name')
+    user_df = user_df.replace(np.nan,"N/A")
     return user_df
 
 @st.cache
@@ -119,14 +124,13 @@ user_df = load_users_df()
 channel_df = load_channel_df()
 msg_df = load_msg_dict()
 
-p_msg_df = process_msg_data(msg_df, user_df, channel_df)
+# filter user is learner
+filter_user_df = user_df[user_df.DataCracy_role.str.startswith('Learner')]
+summary_dict = {'user_id':[], 'submited_ass':[], 'percentage_review':[],'wordcount':[]}
 
-## Submission
+for i in filter_user_df['user_id']:
 
-result_dict = {'Learner_id':[], 'ass_submited':[], '%_review':[],'wordcount':[]}
-for i in user_df['user_id']:
-# Learner_id
-    result_dict['Learner_id'].append(i)
+    summary_dict['user_id'].append(i)
     process_msg_data(msg_df, user_df, channel_df)
     filter_msg_df = msg_df[(msg_df.user_id == i) | (msg_df.reply_user1 == i) | (msg_df.reply_user2 == i)]
     p_msg_df = process_msg_data(filter_msg_df, user_df, channel_df)
@@ -135,13 +139,25 @@ for i in user_df['user_id']:
     submit_df = submit_df[submit_df.user_id == i]
     latest_ts = submit_df.groupby(['channel_name', 'user_id']).msg_ts.idxmax() ## -> Latest ts
     submit_df = submit_df.loc[latest_ts]
-    result_dict['ass_submited'].append(len(submit_df))
+
+
+# count submited assignment
+    summary_dict['submited_ass'].append(len(submit_df))
+# count percentage reviewed assignment 
     review_cnt = 100 * len(submit_df[submit_df.reply_user_count > 0])/len(submit_df) if len(submit_df) > 0  else 0
-    result_dict['%_review'].append(review_cnt)
+    summary_dict['percentage_review'].append(review_cnt)
+# count word in discussion channel
     discuss_df = p_msg_df[p_msg_df.channel_name.str.contains('discuss')]
-    result_dict['wordcount'].append(sum(discuss_df['wordcount']))
-result_df = pd.DataFrame(result_dict)
-st.write(result_df)
-#dis_cols = ['user_id', 'channel_name','%_review','ass_submited','wordcount']
-#st.write(submit_df[dis_cols])
-## Run: streamlit run streamlit/draft.py
+    summary_dict['wordcount'].append(sum(discuss_df['wordcount']))
+
+summary_df = pd.DataFrame(summary_dict)
+st.write(summary_df)
+# visualize histogram chart 
+numerical = ['submited_ass', 'percentage_review', 'wordcount'] 
+st.markdown('# Distribution of Numerical Variables:')
+sns.set(style='white')
+fig, ax = plt.subplots(1,3, figsize=(20, 6))
+for i, subplot in zip(numerical, ax.flatten()):
+    sns.distplot(a = summary_df[i], label = i, kde = False, ax = subplot)
+st.pyplot(fig)
+## Run: streamlit run streamlit/todo_4.py
