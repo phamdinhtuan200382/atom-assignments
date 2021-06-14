@@ -27,7 +27,7 @@ DTC_GROUPS_URL = ('https://raw.githubusercontent.com/anhdanggit/atom-assignments
 def load_users_df():
     # Slack API User Data
     endpoint = "https://slack.com/api/users.list"
-    headers = {"Authorization": "Bearer {}".format(json_data['SLACK_BEARER_TOKEN'])}
+    headers = {"Authorization": "Bearer {}".format(SLACK_BEARER_TOKEN)}
     response_json = requests.post(endpoint, headers=headers).json() 
     user_dat = response_json['members']
 
