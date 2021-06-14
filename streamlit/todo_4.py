@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import re   
 from statistics import median
-from matplotlib import pyplot as plt
 import seaborn as sns
 pd.plotting.register_matplotlib_converters()
 from datetime import datetime as dt
